@@ -13,8 +13,8 @@ class ResultScreen extends StatelessWidget {
   final int amount;
 
   const ResultScreen({
-    super.key, 
-    required this.score, 
+    super.key,
+    required this.score,
     required this.total,
     required this.category,
     required this.difficulty,
@@ -27,7 +27,8 @@ class ResultScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Quiz Results"),
         centerTitle: true,
-        backgroundColor: Colors.blue.shade300,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        foregroundColor: Theme.of(context).appBarTheme.titleTextStyle?.color,
         elevation: 0,
       ),
       body: Container(
@@ -35,7 +36,10 @@ class ResultScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.blue.shade100, Colors.white],
+            colors: [
+              Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              Theme.of(context).scaffoldBackgroundColor,
+            ],
           ),
         ),
         child: Center(
@@ -49,15 +53,16 @@ class ResultScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue.shade700,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   "$score / $total",
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 36,
                     fontWeight: FontWeight.w600,
+                    color: Theme.of(context).textTheme.headlineMedium?.color,
                   ),
                 ),
                 const SizedBox(height: 30),
@@ -66,17 +71,18 @@ class ResultScreen extends StatelessWidget {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        // Save the attempt before navigation
                         Provider.of<AuthProvider>(context, listen: false)
                             .saveAttempt(score, total);
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (_) => const QuizSettingsPage()),
+                          MaterialPageRoute(
+                              builder: (_) => const QuizSettingsPage()),
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue.shade500,
-                        foregroundColor: Colors.white,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onPrimary,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 32, vertical: 16),
                         textStyle: const TextStyle(fontSize: 18),
@@ -89,7 +95,6 @@ class ResultScreen extends StatelessWidget {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        // Save the attempt before navigation
                         Provider.of<AuthProvider>(context, listen: false)
                             .saveAttempt(score, total);
                         Navigator.pushReplacement(
@@ -98,8 +103,9 @@ class ResultScreen extends StatelessWidget {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey.shade600,
-                        foregroundColor: Colors.white,
+                        backgroundColor:
+                            Colors.grey.shade600, // Keep grey or theme it
+                        foregroundColor: Colors.white, // Keep white or theme it
                         padding: const EdgeInsets.symmetric(
                             horizontal: 32, vertical: 16),
                         textStyle: const TextStyle(fontSize: 18),

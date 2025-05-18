@@ -67,7 +67,8 @@ class _QuizSettingsPageState extends State<QuizSettingsPage> {
       appBar: AppBar(
         title: const Text("Quiz Settings"),
         centerTitle: true,
-        backgroundColor: Colors.blue.shade300,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        foregroundColor: Theme.of(context).appBarTheme.titleTextStyle?.color,
         elevation: 0,
       ),
       body: Container(
@@ -75,7 +76,10 @@ class _QuizSettingsPageState extends State<QuizSettingsPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.blue.shade100, Colors.white],
+            colors: [
+              Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              Theme.of(context).scaffoldBackgroundColor,
+            ],
           ),
         ),
         padding: const EdgeInsets.all(24),
@@ -84,25 +88,38 @@ class _QuizSettingsPageState extends State<QuizSettingsPage> {
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text("Category",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+                  Text("Category",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color:
+                              Theme.of(context).textTheme.titleMedium?.color)),
                   const SizedBox(height: 10),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.grey.shade400),
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                     ),
                     child: DropdownButton<int>(
                       isExpanded: true,
                       value: _selectedCategoryId,
-                      hint: const Text("Select Category"),
+                      hint: Text("Select Category",
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.color)),
                       items: _categories.map<DropdownMenuItem<int>>((category) {
                         return DropdownMenuItem<int>(
                           value: category['id'],
-                          child: Text(category['name']),
+                          child: Text(category['name'],
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.color)),
                         );
                       }).toList(),
                       onChanged: (value) {
@@ -110,20 +127,23 @@ class _QuizSettingsPageState extends State<QuizSettingsPage> {
                           _selectedCategoryId = value;
                         });
                       },
-                      underline: Container(), // Remove the default underline
+                      underline: Container(),
                     ),
                   ),
                   const SizedBox(height: 30),
-                  const Text("Difficulty",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+                  Text("Difficulty",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color:
+                              Theme.of(context).textTheme.titleMedium?.color)),
                   const SizedBox(height: 10),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.grey.shade400),
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                     ),
                     child: DropdownButton<String>(
                       isExpanded: true,
@@ -131,8 +151,13 @@ class _QuizSettingsPageState extends State<QuizSettingsPage> {
                       items: ['easy', 'medium', 'hard'].map((level) {
                         return DropdownMenuItem<String>(
                           value: level,
-                          child:
-                              Text(level[0].toUpperCase() + level.substring(1)),
+                          child: Text(
+                              level[0].toUpperCase() + level.substring(1),
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.color)),
                         );
                       }).toList(),
                       onChanged: (value) {
@@ -144,16 +169,19 @@ class _QuizSettingsPageState extends State<QuizSettingsPage> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  const Text("Number of Questions",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+                  Text("Number of Questions",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color:
+                              Theme.of(context).textTheme.titleMedium?.color)),
                   const SizedBox(height: 10),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.grey.shade400),
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                     ),
                     child: DropdownButton<int>(
                       isExpanded: true,
@@ -161,7 +189,12 @@ class _QuizSettingsPageState extends State<QuizSettingsPage> {
                       items: [5, 10, 15, 20].map((count) {
                         return DropdownMenuItem<int>(
                           value: count,
-                          child: Text(count.toString()),
+                          child: Text(count.toString(),
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.color)),
                         );
                       }).toList(),
                       onChanged: (value) {
@@ -179,8 +212,9 @@ class _QuizSettingsPageState extends State<QuizSettingsPage> {
                       onPressed: _startQuiz,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: Colors.blue.shade500,
-                        foregroundColor: Colors.white,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onPrimary,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                         textStyle: const TextStyle(fontSize: 20),

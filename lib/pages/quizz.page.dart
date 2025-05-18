@@ -84,15 +84,24 @@ class _QuizScreenState extends State<QuizScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+      return Scaffold(
+        body: Center(
+            child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.primary)),
       );
     }
 
     if (_questions.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Quiz')),
-        body: const Center(child: Text('No questions available')),
+        appBar: AppBar(
+          title: const Text('Quiz'),
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+          foregroundColor: Theme.of(context).appBarTheme.titleTextStyle?.color,
+        ),
+        body: Center(
+            child: Text('No questions available',
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyMedium?.color))),
       );
     }
 
@@ -105,7 +114,8 @@ class _QuizScreenState extends State<QuizScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Question ${_currentIndex + 1}/${_questions.length}'),
-        backgroundColor: Colors.blue.shade300,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        foregroundColor: Theme.of(context).appBarTheme.titleTextStyle?.color,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -114,7 +124,9 @@ class _QuizScreenState extends State<QuizScreen> {
           children: [
             Text(
               HtmlCharacterEntities.decode(currentQuestion['question']),
-              style: const TextStyle(fontSize: 20),
+              style: TextStyle(
+                  fontSize: 20,
+                  color: Theme.of(context).textTheme.bodyLarge?.color),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
@@ -124,7 +136,8 @@ class _QuizScreenState extends State<QuizScreen> {
                     onPressed: () => _answerQuestion(answer),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.all(16),
-                      backgroundColor: Colors.blue.shade500,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     ),
                     child: Text(
                       HtmlCharacterEntities.decode(answer),

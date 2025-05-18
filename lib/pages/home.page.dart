@@ -11,13 +11,12 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthProvider>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Quiz App"),
         centerTitle: true,
-        backgroundColor: Colors.blue.shade300,
+        backgroundColor:
+            Theme.of(context).appBarTheme.backgroundColor, // Use theme
         elevation: 0,
       ),
       drawer: const AppDrawer(),
@@ -26,7 +25,13 @@ class HomeScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.blue.shade100, Colors.white],
+            colors: [
+              Theme.of(context)
+                  .colorScheme
+                  .primary
+                  .withOpacity(0.1), // Use theme
+              Theme.of(context).scaffoldBackgroundColor, // Use theme
+            ],
           ),
         ),
         child: Center(
@@ -40,13 +45,14 @@ class HomeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const QuizSettingsPage(),
-                      ),
+                          builder: (_) => const QuizSettingsPage()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue.shade500,
-                    foregroundColor: Colors.white,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primary, // Use theme
+                    foregroundColor:
+                        Theme.of(context).colorScheme.onPrimary, // Use theme
                     padding: const EdgeInsets.symmetric(
                         horizontal: 48, vertical: 16),
                     textStyle: const TextStyle(fontSize: 20),
@@ -62,14 +68,14 @@ class HomeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const AttemptsScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const AttemptsScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey.shade500,
-                    foregroundColor: Colors.white,
+                    backgroundColor:
+                        Colors.grey.shade500, // Keep grey for now or theme it
+                    foregroundColor:
+                        Colors.white, // Keep white for now or theme it
                     padding: const EdgeInsets.symmetric(
                         horizontal: 48, vertical: 16),
                     textStyle: const TextStyle(fontSize: 20),
