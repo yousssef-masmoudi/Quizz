@@ -5,123 +5,97 @@ class AboutUsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("About Us!"),
         centerTitle: true,
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        foregroundColor: Theme.of(context).appBarTheme.titleTextStyle?.color,
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.titleTextStyle?.color,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
+          children: [
             Text(
               "Greetings, Quiz Enthusiasts!",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).textTheme.headlineSmall?.color,
-              ),
+              style: theme.textTheme.headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
             Text(
               "Ever wondered who cooked up this brain-tickling adventure? Well, it wasn't a lone genius in a dimly lit room (though that sounds kind of cool!). This quiz app was born from the collaborative sparks of a school project by two ambitious minds:",
-              style: TextStyle(
-                fontSize: 16,
-                color: Theme.of(context).textTheme.bodyMedium?.color,
-              ),
+              style: theme.textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 30),
-            const Text(
-              "Meet the Brainy Binome!",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+            Text(
+              "Meet the Brainy Duo!",
+              style: theme.textTheme.titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
+
+            /// Row of member cards
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
+              children: [
                 Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      // Replace with actual image paths!
-                      const CircleAvatar(
-                        radius: 60,
-                        backgroundImage: AssetImage('assets/youssef1.png'),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        "Youssef Masmoudi",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: SizedBox(
-                          width: 80,
-                          height: 80,
-                          child: Image.asset('assets/youssef2.png',
-                              fit: BoxFit.cover),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                    child: _buildMemberCard("Youssef Masmoudi",
+                        "images/youssef2.png", "images/youssef1.png")),
                 const SizedBox(width: 20),
                 Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      // Replace with actual image paths!
-                      const CircleAvatar(
-                        radius: 60,
-                        backgroundImage: AssetImage('assets/saif1.png'),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        "Saif Sarsar",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      // Replace with another picture of Saif
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: SizedBox(
-                          width: 80,
-                          height: 80,
-                          child: Image.asset('assets/saif2.png',
-                              fit: BoxFit.cover),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                    child: _buildMemberCard(
+                        "Saif Sarsar", "images/saif2.png", "images/saif1.png")),
               ],
             ),
             const SizedBox(height: 40),
             Text(
               "We hope you're having a blast testing your knowledge with our app! It was a fun journey creating it.",
-              style: TextStyle(
-                fontSize: 16,
-                color: Theme.of(context).textTheme.bodyMedium?.color,
-              ),
+              style: theme.textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
             Text(
               "Happy Quizzing!",
-              style: TextStyle(
-                fontSize: 18,
+              style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.secondary,
+                color: theme.colorScheme.secondary,
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildMemberCard(String name, String circleImg, String portraitImg) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        CircleAvatar(
+          radius: 65, // Larger circle image
+          backgroundImage: AssetImage(circleImg),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          name,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        const SizedBox(height: 12),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.asset(
+            portraitImg,
+            fit: BoxFit.contain, // Show full portrait
+            height: 280, // Make it tall for vertical images
+          ),
+        ),
+        const SizedBox(height: 24),
+      ],
     );
   }
 }
