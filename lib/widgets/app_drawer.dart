@@ -63,7 +63,11 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               auth.logout();
               Navigator.pop(context);
-              // Navigate to login screen if you have one
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/',
+                (route) => false,
+              );
             },
           ),
         ],
