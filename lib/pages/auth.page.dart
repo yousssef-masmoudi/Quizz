@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../state/auth_provider.dart';
+import '../state/auth_provider.dart'; // adjust if path differs
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -13,6 +13,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   String? _errorMessage;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -21,14 +22,40 @@ class _AuthScreenState extends State<AuthScreen> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Future<void> _handleLogin(BuildContext context) async {
     final auth = Provider.of<AuthProvider>(context, listen: false);
 
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    bool success = await auth.login(
+      _emailController.text.trim(),
+      _passwordController.text.trim(),
+    );
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (success) {
+      Navigator.pushReplacementNamed(context, '/home');
+    } else {
+      setState(() {
+        _errorMessage = "Identifiants incorrects";
+      });
+
+      print("Login failed for: ${_emailController.text}");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Login"),
-        backgroundColor: Colors.blue.shade300,
+        title: const Text("Connexion"),
+        backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -50,37 +77,30 @@ class _AuthScreenState extends State<AuthScreen> {
               key: const Key('password_field'),
               controller: _passwordController,
               decoration: const InputDecoration(
-                labelText: "Password",
-                hintText: "Enter your password",
+                labelText: "Mot de passe",
+                hintText: "Entrez votre mot de passe",
                 border: OutlineInputBorder(),
               ),
               obscureText: true,
             ),
             const SizedBox(height: 20),
             if (_errorMessage != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Text(
-                  _errorMessage!,
-                  style: const TextStyle(color: Colors.red),
-                ),
+              Text(
+                _errorMessage!,
+                style: const TextStyle(color: Colors.red),
               ),
-            ElevatedButton(
-              onPressed: () {
-                if (auth.login(_emailController.text, _passwordController.text)) {
-                  Navigator.pushReplacementNamed(context, '/home');
-                } else {
-                  setState(() {
-                    _errorMessage = 'Invalid credentials';
-                  });
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue.shade500,
-                padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 12),
-              ),
-              child: const Text("Login"),
-            ),
+            const SizedBox(height: 20),
+            _isLoading
+                ? const CircularProgressIndicator()
+                : ElevatedButton(
+                    onPressed: () => _handleLogin(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue.shade500,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 48, vertical: 12),
+                    ),
+                    child: const Text("Connexion"),
+                  ),
           ],
         ),
       ),

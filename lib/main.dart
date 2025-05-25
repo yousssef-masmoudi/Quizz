@@ -1,5 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:quiz_prj/firebase_options.dart';
 import 'package:quiz_prj/pages/about_us.page.dart';
 import 'package:quiz_prj/pages/attempts_screen.dart';
 import 'package:quiz_prj/pages/auth.page.dart';
@@ -7,7 +9,11 @@ import 'package:quiz_prj/pages/home.page.dart';
 import 'state/auth_provider.dart';
 import 'state/theme_provider.dart'; // Import ThemeProvider
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
     MultiProvider(
       providers: [
