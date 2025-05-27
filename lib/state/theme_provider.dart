@@ -1,18 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.light;
+  bool _isSoundEnabled = true;
 
+  ThemeProvider() {
+    _loadPreferences();
+  }
+
+  // Getters
   ThemeMode get themeMode => _themeMode;
-
   bool get isDarkMode => _themeMode == ThemeMode.dark;
+  bool get isSoundEnabled => _isSoundEnabled;
 
-  void toggleTheme() {
-    _themeMode =
-        _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+  // Load theme and sound preferences
+  Future<void> _loadPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isDark = prefs.getBool('isDarkMode') ?? false;
+    final sound = prefs.getBool('isSoundEnabled') ?? true;
+
+    _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+    _isSoundEnabled = sound;
     notifyListeners();
   }
 
+  // Toggle theme and save preference
+  void toggleTheme() async {
+    _themeMode =
+        _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isDarkMode', _themeMode == ThemeMode.dark);
+    notifyListeners();
+  }
+
+  // Toggle sound and save preference
+  void toggleSound() async {
+    _isSoundEnabled = !_isSoundEnabled;
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isSoundEnabled', _isSoundEnabled);
+    notifyListeners();
+  }
+
+  // Themes remain unchanged
   static ThemeData lightTheme = ThemeData(
     primarySwatch: Colors.blue,
     brightness: Brightness.light,
@@ -32,7 +62,8 @@ class ThemeProvider extends ChangeNotifier {
     cardTheme: const CardTheme(
       elevation: 2,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8))),
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+      ),
     ),
   );
 
@@ -56,7 +87,8 @@ class ThemeProvider extends ChangeNotifier {
       elevation: 4,
       color: Colors.grey[700],
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8))),
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+      ),
     ),
   );
 }

@@ -20,31 +20,31 @@ class AppDrawer extends StatelessWidget {
             decoration: BoxDecoration(
               color: isDarkMode ? Colors.grey[900] : Colors.blue,
             ),
-            child: const Text(
-              'Quiz App',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Quiz App',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Image.asset(
+                  'images/logo.jpg',
+                  height: 60,
+                ),
+              ],
             ),
           ),
           ListTile(
             leading:
-                Icon(Icons.person, color: Theme.of(context).iconTheme.color),
-            title: const Text('Profile'),
+                Icon(Icons.settings, color: Theme.of(context).iconTheme.color),
+            title: const Text('Settings'),
             onTap: () {
-              // Navigate to profile screen
               Navigator.pop(context);
-              Navigator.pushNamed(context, '/profile');
-            },
-          ),
-          SwitchListTile(
-            secondary: Icon(Icons.brightness_6,
-                color: Theme.of(context).iconTheme.color),
-            title: const Text('Dark Mode'),
-            value: isDarkMode,
-            onChanged: (bool value) {
-              themeProvider.toggleTheme();
+              Navigator.pushNamed(context, '/settings');
             },
           ),
           ListTile(

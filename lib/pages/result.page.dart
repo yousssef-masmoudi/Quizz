@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:quiz_prj/models/question_attempt.page.dart';
 import 'package:quiz_prj/pages/quizz.page.dart';
 import 'package:quiz_prj/pages/quizz_settings.dart';
 import 'home.page.dart';
@@ -11,6 +12,7 @@ class ResultScreen extends StatelessWidget {
   final int category;
   final String difficulty;
   final int amount;
+  final List<QuestionAttempt> questions; // Add this line
 
   const ResultScreen({
     super.key,
@@ -19,6 +21,7 @@ class ResultScreen extends StatelessWidget {
     required this.category,
     required this.difficulty,
     required this.amount,
+    required this.questions, // Add this line
   });
 
   @override
@@ -72,48 +75,25 @@ class ResultScreen extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () {
                         Provider.of<AuthProvider>(context, listen: false)
-                            .saveAttempt(score, total);
+                            .saveAttempt(score, total, difficulty, questions);
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (_) => const QuizSettingsPage()),
                         );
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onPrimary,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 32, vertical: 16),
-                        textStyle: const TextStyle(fontSize: 18),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        elevation: 5,
-                      ),
                       child: const Text("Try Again"),
                     ),
                     ElevatedButton(
                       onPressed: () {
                         Provider.of<AuthProvider>(context, listen: false)
-                            .saveAttempt(score, total);
+                            .saveAttempt(score, total, difficulty,
+                                questions); // Fixed here
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (_) => const HomeScreen()),
                         );
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Colors.grey.shade600, // Keep grey or theme it
-                        foregroundColor: Colors.white, // Keep white or theme it
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 32, vertical: 16),
-                        textStyle: const TextStyle(fontSize: 18),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        elevation: 5,
-                      ),
                       child: const Text("Home"),
                     ),
                   ],

@@ -1,8 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:html_character_entities/html_character_entities.dart'; // For decoding HTML entities
+import 'package:html_character_entities/html_character_entities.dart';
+import '../models/question_attempt.page.dart';
 import 'result.page.dart';
+
+import 'package:provider/provider.dart';
+import 'package:quiz_prj/state/theme_provider.dart';
 
 class QuizScreen extends StatefulWidget {
   final int category;
@@ -26,6 +30,11 @@ class _QuizScreenState extends State<QuizScreen> {
   int _score = 0;
   bool _isLoading = true;
 
+  List<String> _selectedAnswers = [];
+  List<String> _shuffledAnswers = [];
+  bool _isAnswered = false;
+  String? _selectedAnswer;
+
   @override
   void initState() {
     super.initState();
@@ -43,6 +52,7 @@ class _QuizScreenState extends State<QuizScreen> {
         setState(() {
           _questions = List<Map<String, dynamic>>.from(data['results']);
           _isLoading = false;
+          _prepareAnswers();
         });
       }
     } catch (e) {
@@ -57,28 +67,76 @@ class _QuizScreenState extends State<QuizScreen> {
     }
   }
 
-  void _answerQuestion(String selectedAnswer) {
-    final correctAnswer = _questions[_currentIndex]['correct_answer'];
-    if (selectedAnswer == correctAnswer) {
-      setState(() => _score++);
-    }
+  void _prepareAnswers() {
+    if (_questions.isEmpty) return;
 
-    if (_currentIndex < _questions.length - 1) {
-      setState(() => _currentIndex++);
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ResultScreen(
-            score: _score,
-            total: _questions.length,
-            category: widget.category,
-            difficulty: widget.difficulty,
-            amount: widget.amount,
-          ),
-        ),
-      );
+    final currentQuestion = _questions[_currentIndex];
+    _shuffledAnswers = [
+      ...List<String>.from(currentQuestion['incorrect_answers']),
+      currentQuestion['correct_answer'] as String,
+    ];
+    _shuffledAnswers.shuffle();
+  }
+
+  void _answerQuestion(String selectedAnswer) async {
+    if (_isAnswered) return;
+
+    final correctAnswer = _questions[_currentIndex]['correct_answer'];
+    final isCorrect = selectedAnswer == correctAnswer;
+
+    while (_selectedAnswers.length <= _currentIndex) {
+      _selectedAnswers.add('');
     }
+    _selectedAnswers[_currentIndex] = selectedAnswer;
+
+    setState(() {
+      _selectedAnswer = selectedAnswer;
+      _isAnswered = true;
+      if (isCorrect) _score++;
+    });
+
+    await Future.delayed(const Duration(seconds: 2), () {
+      if (_currentIndex < _questions.length - 1) {
+        setState(() {
+          _currentIndex++;
+          _isAnswered = false;
+          _selectedAnswer = null;
+        });
+        _prepareAnswers();
+      } else {
+        final questionAttempts = _questions.asMap().entries.map((entry) {
+          return QuestionAttempt(
+            questionText:
+                HtmlCharacterEntities.decode(entry.value['question'] as String),
+            selectedAnswer: _selectedAnswers[entry.key],
+            correctAnswer: entry.value['correct_answer'] as String,
+          );
+        }).toList();
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ResultScreen(
+              score: _score,
+              total: _questions.length,
+              category: widget.category,
+              difficulty: widget.difficulty,
+              amount: widget.amount,
+              questions: questionAttempts,
+            ),
+          ),
+        );
+      }
+    });
+  }
+
+  Color _getButtonColor(String answer) {
+    if (!_isAnswered) return Theme.of(context).colorScheme.primary;
+
+    final correctAnswer = _questions[_currentIndex]['correct_answer'];
+    if (answer == correctAnswer) return Colors.green;
+    if (answer == _selectedAnswer) return Colors.red;
+    return Theme.of(context).colorScheme.primary;
   }
 
   @override
@@ -86,8 +144,10 @@ class _QuizScreenState extends State<QuizScreen> {
     if (_isLoading) {
       return Scaffold(
         body: Center(
-            child: CircularProgressIndicator(
-                color: Theme.of(context).colorScheme.primary)),
+          child: CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
       );
     }
 
@@ -99,17 +159,17 @@ class _QuizScreenState extends State<QuizScreen> {
           foregroundColor: Theme.of(context).appBarTheme.titleTextStyle?.color,
         ),
         body: Center(
-            child: Text('No questions available',
-                style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyMedium?.color))),
+          child: Text(
+            'No questions available',
+            style: TextStyle(
+              color: Theme.of(context).textTheme.bodyMedium?.color,
+            ),
+          ),
+        ),
       );
     }
 
     final currentQuestion = _questions[_currentIndex];
-    final answers = [
-      ...currentQuestion['incorrect_answers'],
-      currentQuestion['correct_answer']
-    ]..shuffle();
 
     return Scaffold(
       appBar: AppBar(
@@ -122,22 +182,39 @@ class _QuizScreenState extends State<QuizScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Progress bar
+            LinearProgressIndicator(
+              value: (_currentIndex + 1) / _questions.length,
+              backgroundColor: Colors.grey[300],
+              valueColor: AlwaysStoppedAnimation<Color>(
+                Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Question text
             Text(
               HtmlCharacterEntities.decode(currentQuestion['question']),
               style: TextStyle(
-                  fontSize: 20,
-                  color: Theme.of(context).textTheme.bodyLarge?.color),
+                fontSize: 20,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
-            ...answers.map((answer) => Padding(
+
+            // Answer buttons
+            ..._shuffledAnswers.map((answer) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: ElevatedButton(
-                    onPressed: () => _answerQuestion(answer),
+                    onPressed:
+                        _isAnswered ? null : () => _answerQuestion(answer),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.all(16),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      backgroundColor: _getButtonColor(answer),
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: _getButtonColor(answer),
+                      disabledForegroundColor: Colors.white,
                     ),
                     child: Text(
                       HtmlCharacterEntities.decode(answer),

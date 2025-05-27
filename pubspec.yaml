@@ -30,16 +30,19 @@ environment:
 dependencies:
   firebase_core: ^2.30.0
   firebase_auth: ^4.17.4
+  cloud_firestore: ^4.15.5
   flutter:
     sdk: flutter
   http: ^1.2.0
   html_character_entities: ^1.0.0+1
   provider: ^6.1.5
-  intl: ^0.18.0 # Add this line
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  shared_preferences: ^2.2.2
+  audioplayers: ^5.2.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -61,6 +64,10 @@ flutter:
     - images/youssef2.png
     - images/saif1.png
     - images/saif2.png
+    - images/logo.jpg
+    - assets/wrong.wav
+    - assets/right.wav
+    - images/logo2.png
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

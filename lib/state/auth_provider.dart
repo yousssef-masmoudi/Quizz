@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:quiz_prj/models/attempt.page.dart';
+import 'package:quiz_prj/models/question_attempt.page.dart';
 
 class AuthProvider with ChangeNotifier {
   bool _isAuthenticated = false;
@@ -9,6 +10,7 @@ class AuthProvider with ChangeNotifier {
   List<Attempt> _attempts = [];
   List<Attempt> get attempts => List.unmodifiable(_attempts);
 
+  /// Login method using Firebase
   Future<bool> login(String email, String password) async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -19,26 +21,42 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      print("Firebase login failed: $e"); // Log the actual error
+      print("Firebase login failed: $e");
       return false;
     }
   }
 
+  Future<bool> register(String email, String password) async {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email.trim(),
+        password: password.trim(),
+      );
+      _isAuthenticated = true;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      print("Firebase registration failed: $e");
+      return false;
+    }
+  }
+
+  /// Logout the user
   void logout() async {
     await FirebaseAuth.instance.signOut();
     _isAuthenticated = false;
-    _attempts.clear();
     notifyListeners();
   }
 
-  void saveAttempt(int score, int totalQuestions) {
-    _attempts.add(
-      Attempt(
-        date: DateTime.now(),
-        score: score,
-        totalQuestions: totalQuestions,
-      ),
-    );
+  void saveAttempt(int score, int total, String difficulty,
+      List<QuestionAttempt> questions) {
+    _attempts.add(Attempt(
+      date: DateTime.now(),
+      score: score,
+      totalQuestions: total,
+      difficulty: difficulty,
+      questions: questions,
+    ));
     notifyListeners();
   }
 

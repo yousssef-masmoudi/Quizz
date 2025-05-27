@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart'; // For formatting the date
+import 'package:quiz_prj/pages/attempt_details.page.dart';
 import '../state/auth_provider.dart';
 
 class AttemptsScreen extends StatelessWidget {
@@ -43,29 +44,38 @@ class AttemptsScreen extends StatelessWidget {
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-              color: Theme.of(context).cardColor,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      "Score: ${a.score}/${a.totalQuestions}",
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AttemptDetailsPage(attempt: a),
                     ),
-                    const SizedBox(height: 8.0),
-                    Text(
-                      "Date: ${DateFormat('yyyy-MM-dd HH:mm').format(a.date)}",
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Theme.of(context).textTheme.bodySmall?.color,
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        "Score: ${a.score}/${a.totalQuestions}",
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 8.0),
+                      Text(
+                        "Date: ${DateFormat('yyyy-MM-dd HH:mm').format(a.date)}",
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );

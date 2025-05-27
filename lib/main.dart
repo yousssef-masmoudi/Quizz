@@ -6,8 +6,10 @@ import 'package:quiz_prj/pages/about_us.page.dart';
 import 'package:quiz_prj/pages/attempts_screen.dart';
 import 'package:quiz_prj/pages/auth.page.dart';
 import 'package:quiz_prj/pages/home.page.dart';
+import 'package:quiz_prj/pages/inscription.page.dart';
+import 'package:quiz_prj/pages/settings.page.dart';
 import 'state/auth_provider.dart';
-import 'state/theme_provider.dart'; // Import ThemeProvider
+import 'state/theme_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +44,8 @@ class QuizApp extends StatelessWidget {
           '/': (context) => const AuthScreen(),
           '/home': (context) => const HomeScreen(),
           '/attempts': (context) => const AttemptsScreen(),
+          '/settings': (context) => const SettingsPage(),
+          '/inscription': (context) => const InscriptionScreen(),
           '/profile': (context) => const AboutUsPage(),
         },
       ),

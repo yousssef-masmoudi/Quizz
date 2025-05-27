@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../state/auth_provider.dart'; // adjust if path differs
 
-class AuthScreen extends StatefulWidget {
-  const AuthScreen({super.key});
+class InscriptionScreen extends StatefulWidget {
+  const InscriptionScreen({super.key});
 
   @override
-  State<AuthScreen> createState() => _AuthScreenState();
+  State<InscriptionScreen> createState() => _InscriptionScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _InscriptionScreenState extends State<InscriptionScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   String? _errorMessage;
@@ -22,7 +22,7 @@ class _AuthScreenState extends State<AuthScreen> {
     super.dispose();
   }
 
-  Future<void> _handleLogin(BuildContext context) async {
+  Future<void> _handleRegister(BuildContext context) async {
     final auth = Provider.of<AuthProvider>(context, listen: false);
 
     setState(() {
@@ -30,7 +30,7 @@ class _AuthScreenState extends State<AuthScreen> {
       _errorMessage = null;
     });
 
-    bool success = await auth.login(
+    bool success = await auth.register(
       _emailController.text.trim(),
       _passwordController.text.trim(),
     );
@@ -43,10 +43,10 @@ class _AuthScreenState extends State<AuthScreen> {
       Navigator.pushReplacementNamed(context, '/home');
     } else {
       setState(() {
-        _errorMessage = "Identifiants incorrects";
+        _errorMessage = "Erreur lors de l'inscription";
       });
 
-      print("Login failed for: ${_emailController.text}");
+      print("Registration failed for: ${_emailController.text}");
     }
   }
 
@@ -54,7 +54,7 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Connexion"),
+        title: const Text("Inscription"),
         centerTitle: true,
         backgroundColor: Colors.blue,
       ),
@@ -63,7 +63,6 @@ class _AuthScreenState extends State<AuthScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Add your logo image here
             Image.asset(
               'images/logo2.png',
               height: 120,
@@ -100,20 +99,20 @@ class _AuthScreenState extends State<AuthScreen> {
             _isLoading
                 ? const CircularProgressIndicator()
                 : ElevatedButton(
-                    onPressed: () => _handleLogin(context),
+                    onPressed: () => _handleRegister(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue.shade500,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 48, vertical: 12),
                     ),
-                    child: const Text("Connexion"),
+                    child: const Text("S'inscrire"),
                   ),
             const SizedBox(height: 16),
             TextButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/inscription');
+                Navigator.pop(context);
               },
-              child: const Text("Nouveau utilisateur ? Créer un compte"),
+              child: const Text("Déjà inscrit ? Se connecter"),
             ),
           ],
         ),
