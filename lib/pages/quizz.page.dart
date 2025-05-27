@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:html_character_entities/html_character_entities.dart';
+import 'package:quiz_prj/state/settings_provider.dart';
 import '../models/question_attempt.page.dart';
 import 'result.page.dart';
-
+import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_prj/state/theme_provider.dart';
 
@@ -29,6 +30,8 @@ class _QuizScreenState extends State<QuizScreen> {
   int _currentIndex = 0;
   int _score = 0;
   bool _isLoading = true;
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  bool _isAudioInitialized = false;
 
   List<String> _selectedAnswers = [];
   List<String> _shuffledAnswers = [];
@@ -38,7 +41,27 @@ class _QuizScreenState extends State<QuizScreen> {
   @override
   void initState() {
     super.initState();
+    _initAudio();
     _fetchQuestions();
+  }
+
+  Future<void> _initAudio() async {
+    try {
+      // Preload both sounds
+      await _audioPlayer.setAsset('assets/sounds/correct.mp3');
+      await _audioPlayer.setAsset('assets/sounds/wrong.mp3');
+      setState(() {
+        _isAudioInitialized = true;
+      });
+    } catch (e) {
+      print('Error initializing audio: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchQuestions() async {
@@ -78,6 +101,23 @@ class _QuizScreenState extends State<QuizScreen> {
     _shuffledAnswers.shuffle();
   }
 
+  Future<void> _playSound(bool isCorrect) async {
+    final settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
+
+    if (!_isAudioInitialized || !settingsProvider.isSoundEnabled) return;
+
+    try {
+      final soundFile =
+          isCorrect ? 'assets/sounds/correct.mp3' : 'assets/sounds/wrong.mp3';
+      await _audioPlayer.stop();
+      await _audioPlayer.setAsset(soundFile);
+      await _audioPlayer.play();
+    } catch (e) {
+      print('Error playing sound: $e');
+    }
+  }
+
   void _answerQuestion(String selectedAnswer) async {
     if (_isAnswered) return;
 
@@ -94,6 +134,8 @@ class _QuizScreenState extends State<QuizScreen> {
       _isAnswered = true;
       if (isCorrect) _score++;
     });
+
+    await _playSound(isCorrect);
 
     await Future.delayed(const Duration(seconds: 2), () {
       if (_currentIndex < _questions.length - 1) {

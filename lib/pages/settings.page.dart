@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:quiz_prj/state/theme_provider.dart'; // Or settings_provider.dart if renamed
+import 'package:quiz_prj/state/theme_provider.dart';
+import 'package:quiz_prj/state/settings_provider.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -8,6 +9,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
@@ -22,9 +24,9 @@ class SettingsPage extends StatelessWidget {
           ),
           SwitchListTile(
             title: const Text('Enable Sound'),
-            value: themeProvider.isSoundEnabled,
+            value: settingsProvider.isSoundEnabled,
             onChanged: (value) {
-              themeProvider.toggleSound();
+              settingsProvider.toggleSound();
             },
           ),
         ],

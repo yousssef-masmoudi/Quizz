@@ -8,6 +8,7 @@ import 'package:quiz_prj/pages/auth.page.dart';
 import 'package:quiz_prj/pages/home.page.dart';
 import 'package:quiz_prj/pages/inscription.page.dart';
 import 'package:quiz_prj/pages/settings.page.dart';
+import 'package:quiz_prj/state/settings_provider.dart';
 import 'state/auth_provider.dart';
 import 'state/theme_provider.dart';
 
@@ -21,6 +22,7 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => SettingsProvider()),
       ],
       child: const QuizApp(),
     ),
