@@ -8,6 +8,7 @@ import 'result.page.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_prj/state/theme_provider.dart';
+import 'package:flutter/services.dart';
 
 class QuizScreen extends StatefulWidget {
   final int category;
@@ -20,6 +21,7 @@ class QuizScreen extends StatefulWidget {
     required this.difficulty,
     required this.amount,
   });
+
 
   @override
   State<QuizScreen> createState() => _QuizScreenState();
@@ -123,6 +125,19 @@ class _QuizScreenState extends State<QuizScreen> {
 
     final correctAnswer = _questions[_currentIndex]['correct_answer'];
     final isCorrect = selectedAnswer == correctAnswer;
+
+    // Add vibration feedback
+    try {
+      if (isCorrect) {
+        HapticFeedback.lightImpact();
+        print('🟢 Vibration');
+      } else {
+        HapticFeedback.heavyImpact();
+        print('🔴 Vibration');
+      }
+    } catch (e) {
+      print('⚠️ Vibration failed: $e');
+    }
 
     while (_selectedAnswers.length <= _currentIndex) {
       _selectedAnswers.add('');
